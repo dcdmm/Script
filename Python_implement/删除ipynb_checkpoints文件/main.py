@@ -17,7 +17,7 @@ def find_checkpoints(file_paths='/'):  # 默认为当前根目录
 
 
 def find_file(catalog):
-    """ 找个一个文件夹中所有的目录 """
+    """ 找个一个文件夹中所有的文件 """
     file_lst = list()
     for k in list(os.walk(catalog)):
         for v in k[2]:
