@@ -29,9 +29,9 @@ def find_file(catalog):
 def remove_checkpoints(file_path_lst):
     """ 删除所有的.ipynb_checkpoints文件夹 """
     if not file_path_lst:
-        print("没有*.ipynb文件夹")
+        print("没有*.ipynb_checkpointb文件夹")
     else:
-        print('.ipynb文件夹共有', len(file_path_lst), '个')
+        print('.ipynb_checkpoint文件夹共有', len(file_path_lst), '个')
         print(file_path_lst)
         input_remove = input('是否全部进行删除?yes or no\n')
         if input_remove == "yes":
@@ -49,5 +49,5 @@ def remove_checkpoints(file_path_lst):
 
 if __name__ == '__main__':
     # 测试通过
-    icp_lst = find_checkpoints(r'C:\Users\dcdmm\Music\GitHubProjects')
+    icp_lst = find_checkpoints(r'C:\Users\duanm\Music\GitHubProjects')
     remove_checkpoints(icp_lst)
