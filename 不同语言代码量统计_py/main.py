@@ -15,7 +15,7 @@ def count_py_files(directory):
     return {key: value for key, value in code_cout.items() if value != 0}
 
 
-print("MLNote:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\MLBase'))
+print("MLBase:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\MLBase'))
 print("CPPStudy:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\CPPStudy'))
 print("SQLStudy:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\SQLStudy'))
 print("JavaScalaStudy:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\JavaScalaStudy'))
