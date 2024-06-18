@@ -15,12 +15,14 @@ def count_py_files(directory):
     return {key: value for key, value in code_cout.items() if value != 0}
 
 
+# 加油学习!
 print("MLBase:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\MLBase'))
-print("CPPStudy:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\CPPStudy'))
-print("SQLStudy:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\SQLStudy'))
-print("JavaScalaStudy:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\JavaScalaStudy'))
-print("RustStudy:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\RustStudy'))
-print("OtherStudy:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\OtherStudy'))
+print("LLM:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\LLM'))
 print("PyDevelopment:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\PyDevelopment'))
 print("Algorithms:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\Algorithms'))
+print("RustStudy:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\RustStudy'))
+print("CPPStudy:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\CPPStudy'))
+print("OtherStudy:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\OtherStudy'))
+print("JavaScalaStudy:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\JavaScalaStudy'))
+print("SQLStudy:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\SQLStudy'))
 print("Script:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\Script'))
