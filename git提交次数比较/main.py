@@ -103,8 +103,8 @@ if __name__ == "__main__":
         print(f"{project_name:20s}: {commits:5d} 次提交")
 
     total_commits = sum(commit_counts.values())
-    print(f"\n{'='*50}")
-    print(f"{'总计':20s}: {total_commits:5d} 次提交")
-    print(f"{'='*50}\n")
+    print(f"\n{'='*40}")
+    print(f"{'total':20s}: {total_commits:5d} 次提交")
+    print(f"{'='*40}\n")
 
     plot_pie_chart(sorted_commits)
