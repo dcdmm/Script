@@ -5,6 +5,31 @@ from matplotlib import rcParams
 rcParams['font.sans-serif'] = ['SimHei']
 rcParams['axes.unicode_minus'] = False
 
+# 自定义颜色列表
+custom_colors = [
+    '#d62728',  # tab:red
+    '#ff7f0e',  # tab:orange
+    '#e377c2',  # tab:pink
+    '#9467bd',  # tab:purple
+    '#bcbd22',  # tab:olive
+    '#2ca02c',  # tab:green
+    '#17becf',  # tab:cyan
+    '#1f77b4',  # tab:blue
+    '#8c564b',  # tab:brown
+    '#7f7f7f',  # tab:gray
+    '#aec7e8',  # light blue
+    '#ffbb78',  # light orange
+    '#98df8a',  # light green
+    '#ff9896',  # light red
+    '#c5b0d5',  # light purple
+    '#c49c94',  # light brown
+    '#f7b6d2',  # light pink
+    '#dbdb8d',  # light olive
+    '#9edae5',  # light cyan
+    '#ad494a',  # dark red
+    '#8c6d31',  # dark yellow
+]
+
 projects = {"MLBase": r'C:\Users\duanm\Music\GitHubProjects\MLBase',
             "LLM": r'C:\Users\duanm\Music\GitHubProjects\LLM',
             "PyDevelopment": r'C:\Users\duanm\Music\GitHubProjects\PyDevelopment',
@@ -36,30 +61,6 @@ def plot_pie_chart(commit_counts):
     total = sum(sizes)
     plt.figure(figsize=(12, 6))
 
-    # 自定义颜色列表
-    custom_colors = [
-        '#d62728',  # tab:red
-        '#ff7f0e',  # tab:orange
-        '#e377c2',  # tab:pink
-        '#9467bd',  # tab:purple
-        '#bcbd22',  # tab:olive
-        '#2ca02c',  # tab:green
-        '#17becf',  # tab:cyan
-        '#1f77b4',  # tab:blue
-        '#8c564b',  # tab:brown
-        '#7f7f7f',  # tab:gray
-        '#aec7e8',  # light blue
-        '#ffbb78',  # light orange
-        '#98df8a',  # light green
-        '#ff9896',  # light red
-        '#c5b0d5',  # light purple
-        '#c49c94',  # light brown
-        '#f7b6d2',  # light pink
-        '#dbdb8d',  # light olive
-        '#9edae5',  # light cyan
-        '#ad494a',  # dark red
-        '#8c6d31',  # dark yellow
-    ]
     # 项目数量超出颜色列表长度时循环使用
     colors = [custom_colors[i % len(custom_colors)] for i in range(len(labels))]
 
@@ -87,7 +88,27 @@ def plot_pie_chart(commit_counts):
                loc="center left",
                bbox_to_anchor=(1.09, 0, 0.5, 1))
     plt.tight_layout()
-    plt.show()
+
+
+def plot_bar_chart(commit_counts):
+    """绘制柱状图"""
+    labels, sizes = list(commit_counts.keys()), list(commit_counts.values())
+    plt.figure(figsize=(10, 6))
+
+    colors = [custom_colors[i % len(custom_colors)] for i in range(len(labels))]
+
+    bars = plt.bar(labels, sizes, color=colors)
+
+    plt.title('各项目Git提交次数统计', fontsize=16)
+    plt.xlabel('项目名', fontsize=14, fontweight='bold')
+    plt.ylabel('提交次数', fontsize=12)
+    plt.xticks(rotation=45, fontsize=12, fontweight='bold')
+    for bar in bars:
+        height = bar.get_height()
+        plt.text(bar.get_x() + bar.get_width()/2., height,
+                 f'{int(height)}',
+                 ha='center', va='bottom', fontsize=12, fontweight='bold')
+    plt.tight_layout()
 
 
 if __name__ == "__main__":
@@ -108,3 +129,5 @@ if __name__ == "__main__":
     print(f"{'='*40}\n")
 
     plot_pie_chart(sorted_commits)
+    plot_bar_chart(sorted_commits)
+    plt.show()
