@@ -30,16 +30,19 @@ custom_colors = [
     '#8c6d31',  # dark yellow
 ]
 
-projects = {"MLBase": r'C:\Users\duanm\Music\GitHubProjects\MLBase',
-            "LLM": r'C:\Users\duanm\Music\GitHubProjects\LLM',
-            "PyDevelopment": r'C:\Users\duanm\Music\GitHubProjects\PyDevelopment',
-            "Algorithms": r'C:\Users\duanm\Music\GitHubProjects\Algorithms',
-            "RustStudy": r'C:\Users\duanm\Music\GitHubProjects\RustStudy',
-            "CPPStudy": r'C:\Users\duanm\Music\GitHubProjects\CPPStudy',
-            "OtherStudy": r'C:\Users\duanm\Music\GitHubProjects\OtherStudy',
-            "JavaScalaStudy": r'C:\Users\duanm\Music\GitHubProjects\JavaScalaStudy',
-            "SQLStudy": r'C:\Users\duanm\Music\GitHubProjects\SQLStudy',
-            "Script": r'C:\Users\duanm\Music\GitHubProjects\Script'}
+projects = {
+    "MLBase": r'C:\Users\duanm\Music\GitHubProjects\MLBase',
+    "LLM": r'C:\Users\duanm\Music\GitHubProjects\LLM',
+    "PyDevelopment": r'C:\Users\duanm\Music\GitHubProjects\PyDevelopment',
+    "Algorithms": r'C:\Users\duanm\Music\GitHubProjects\Algorithms',
+    "RustStudy": r'C:\Users\duanm\Music\GitHubProjects\RustStudy',
+    "CPPStudy": r'C:\Users\duanm\Music\GitHubProjects\CPPStudy',
+    "OtherStudy": r'C:\Users\duanm\Music\GitHubProjects\OtherStudy',
+    "JavaScalaStudy": r'C:\Users\duanm\Music\GitHubProjects\JavaScalaStudy',
+    "SQLStudy": r'C:\Users\duanm\Music\GitHubProjects\SQLStudy',
+    "Script": r'C:\Users\duanm\Music\GitHubProjects\Script',
+    "FrontendAI": r'C:\Users\duanm\Music\GitHubProjects\FrontendAI',
+}
 
 
 def get_total_commits(repo_path):
