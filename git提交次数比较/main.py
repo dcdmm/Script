@@ -31,17 +31,15 @@ custom_colors = [
 ]
 
 projects = {
-    "MLBase": r'C:\Users\duanm\Music\GitHubProjects\MLBase',
     "LLM": r'C:\Users\duanm\Music\GitHubProjects\LLM',
+    "MLBase": r'C:\Users\duanm\Music\GitHubProjects\MLBase',
     "PyDevelopment": r'C:\Users\duanm\Music\GitHubProjects\PyDevelopment',
-    "Algorithms": r'C:\Users\duanm\Music\GitHubProjects\Algorithms',
     "RustStudy": r'C:\Users\duanm\Music\GitHubProjects\RustStudy',
+    "FrontendStudy": r'C:\Users\duanm\Music\GitHubProjects\FrontendStudy',
     "CPPStudy": r'C:\Users\duanm\Music\GitHubProjects\CPPStudy',
-    "OtherStudy": r'C:\Users\duanm\Music\GitHubProjects\OtherStudy',
     "JavaScalaStudy": r'C:\Users\duanm\Music\GitHubProjects\JavaScalaStudy',
-    "SQLStudy": r'C:\Users\duanm\Music\GitHubProjects\SQLStudy',
-    "Script": r'C:\Users\duanm\Music\GitHubProjects\Script',
-    "FrontendAI": r'C:\Users\duanm\Music\GitHubProjects\FrontendAI',
+    "OtherStudy": r'C:\Users\duanm\Music\GitHubProjects\OtherStudy',
+    "SQLStudy": r'C:\Users\duanm\Music\GitHubProjects\SQLStudy'
 }
 
 
