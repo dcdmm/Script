@@ -4,6 +4,8 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import Final, TypeAlias
 import matplotlib.pyplot as plt
+from matplotlib.colors import to_hex
+from matplotlib.patches import Patch
 from matplotlib.ticker import StrMethodFormatter
 
 SourceCounts: TypeAlias = dict[str, int]
@@ -20,6 +22,7 @@ SOURCE_SUFFIXES: Final[tuple[str, ...]] = (
     ".rs",
     ".ts",
     ".tsx",
+    ".html",
     ".css",
     ".js",
     ".jsx",
@@ -54,6 +57,7 @@ SOURCE_COLORS: Final[dict[str, str]] = {
     ".rs": "#A6531B",
     ".ts": "#3178C6",
     ".tsx": "#087EA4",
+    ".html": "#E34F26",
     ".css": "#663399",
     ".js": "#E7C500",
     ".jsx": "#149ECA",
@@ -67,6 +71,8 @@ BACKGROUND_COLOR: Final = "#F5F7FB"
 ROW_BAND_COLOR: Final = "#EAF0F7"
 SURFACE_COLOR: Final = "#FFFFFF"
 BORDER_COLOR: Final = "#DCE3ED"
+DISPLAY_DPI: Final = 160
+EXPORT_DPI: Final = 300
 
 
 def count_git_source_files(directory: str | os.PathLike[str]) -> SourceCounts:
@@ -126,10 +132,154 @@ def _get_contrasting_text_color(background_color: str) -> str:
     return TEXT_COLOR if luminance > 0.62 else "#FFFFFF"
 
 
+def _draw_project_share_donut(
+        ax,
+        project_counts: Mapping[str, Mapping[str, int]],
+) -> None:
+    """绘制各项目源码文件数量占比的空心饼图。"""
+    project_totals = {
+        project: sum(counts.values())
+        for project, counts in project_counts.items()
+    }
+    projects = sorted(
+        project_totals,
+        key=lambda project: (-project_totals[project], project.casefold()),
+    )
+    total_source_files = sum(project_totals.values())
+
+    color_map = plt.get_cmap("tab20")
+    project_colors = {
+        project: color_map(index % color_map.N)
+        for index, project in enumerate(sorted(projects, key=str.casefold))
+    }
+
+    ax.set_facecolor(SURFACE_COLOR)
+    ax.set_title(
+        "各项目源码文件占比",
+        loc="left",
+        fontsize=16,
+        fontweight="bold",
+        color=TEXT_COLOR,
+        pad=28,
+    )
+    ax.text(
+        0,
+        1.015,
+        "项目源码文件数 ÷ 全部项目源码文件数",
+        transform=ax.transAxes,
+        color=MUTED_COLOR,
+        fontsize=9,
+    )
+
+    if total_source_files:
+        visible_projects = [
+            project for project in projects if project_totals[project] > 0
+        ]
+        wedges, _, percentage_labels = ax.pie(
+            [project_totals[project] for project in visible_projects],
+            colors=[project_colors[project] for project in visible_projects],
+            startangle=90,
+            counterclock=False,
+            radius=0.82,
+            center=(0, 0.18),
+            wedgeprops={
+                "width": 0.32,
+                "edgecolor": SURFACE_COLOR,
+                "linewidth": 2,
+            },
+            autopct=lambda percentage: (
+                f"{percentage:.1f}%" if percentage >= 4 else ""
+            ),
+            pctdistance=0.79,
+            textprops={
+                "color": TEXT_COLOR,
+                "fontsize": 9,
+                "fontweight": "bold",
+            },
+        )
+        for wedge, percentage_label in zip(
+                wedges,
+                percentage_labels,
+                strict=True,
+        ):
+            percentage_label.set_color(
+                _get_contrasting_text_color(to_hex(wedge.get_facecolor()))
+            )
+    else:
+        ax.pie(
+            [1],
+            colors=[ROW_BAND_COLOR],
+            startangle=90,
+            radius=0.82,
+            center=(0, 0.18),
+            wedgeprops={
+                "width": 0.32,
+                "edgecolor": SURFACE_COLOR,
+                "linewidth": 2,
+            },
+        )
+
+    ax.text(
+        0,
+        0.23,
+        f"{total_source_files:,}",
+        ha="center",
+        va="center",
+        fontsize=20,
+        fontweight="bold",
+        color=TEXT_COLOR,
+    )
+    ax.text(
+        0,
+        0.08,
+        "源码文件",
+        ha="center",
+        va="center",
+        fontsize=9,
+        color=MUTED_COLOR,
+    )
+
+    legend_handles = []
+    for project in projects:
+        count = project_totals[project]
+        percentage = count / total_source_files if total_source_files else 0
+        legend_handles.append(
+            Patch(
+                facecolor=project_colors[project],
+                edgecolor="none",
+                label=f"{project}  {count:,} · {percentage:.1%}",
+            )
+        )
+
+    if legend_handles:
+        legend = ax.legend(
+            handles=legend_handles,
+            loc="lower center",
+            bbox_to_anchor=(0.5, -0.12),
+            ncol=2,
+            frameon=False,
+            labelcolor=TEXT_COLOR,
+            fontsize=8.5,
+            columnspacing=1.2,
+            handlelength=1.2,
+            handletextpad=0.6,
+            labelspacing=0.85,
+        )
+        legend.set_zorder(5)
+
+    ax.set_aspect("equal")
+    ax.set_xlim(-1.12, 1.12)
+    ax.set_ylim(-1.12, 1.15)
+    ax.set_xticks([])
+    ax.set_yticks([])
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+
+
 def show_source_file_chart(
         project_counts: Mapping[str, Mapping[str, int]],
 ) -> None:
-    """用一张堆叠柱状图比较各项目的源码文件数量。"""
+    """用堆叠柱状图和空心饼图展示各项目的源码文件数量"""
     plt.rcParams["font.sans-serif"] = [
         "Microsoft YaHei",
         "SimHei",
@@ -137,6 +287,8 @@ def show_source_file_chart(
         "DejaVu Sans",
     ]
     plt.rcParams["axes.unicode_minus"] = False
+    plt.rcParams["figure.dpi"] = DISPLAY_DPI
+    plt.rcParams["savefig.dpi"] = EXPORT_DPI
 
     all_types = [*SOURCE_SUFFIXES, "CMakeLists.txt"]
     visible_types = [
@@ -158,7 +310,19 @@ def show_source_file_chart(
         for project in sorted_projects
     ]
 
-    fig, ax = plt.subplots(figsize=(15, 8.2), facecolor=BACKGROUND_COLOR)
+    fig = plt.figure(
+        figsize=(18, 8.8),
+        dpi=DISPLAY_DPI,
+        facecolor=BACKGROUND_COLOR,
+    )
+    grid = fig.add_gridspec(
+        1,
+        2,
+        width_ratios=(2.4, 1),
+        wspace=0.14,
+    )
+    ax = fig.add_subplot(grid[0, 0])
+    share_ax = fig.add_subplot(grid[0, 1])
     ax.set_facecolor(BACKGROUND_COLOR)
     y_positions = list(range(len(sorted_projects)))
     left = [0 for _ in sorted_projects]
@@ -260,32 +424,7 @@ def show_source_file_chart(
     ax.tick_params(axis="y", colors=TEXT_COLOR, length=0, pad=10, labelsize=10)
     ax.xaxis.set_major_formatter(StrMethodFormatter("{x:,.0f}"))
 
-    totals_descending = sorted(totals, reverse=True)
-    second_largest = totals_descending[1] if len(totals_descending) > 1 else 0
-    has_right_side_space = second_largest < max_total * 0.55
-
-    if has_right_side_space:
-        legend = ax.legend(
-            title="源码类型",
-            loc="center left",
-            bbox_to_anchor=(0.48, 0.39),
-            ncol=2,
-            frameon=True,
-            labelcolor=TEXT_COLOR,
-            fontsize=9,
-            title_fontsize=10,
-            columnspacing=1.6,
-            handlelength=1.4,
-            handletextpad=0.7,
-            labelspacing=0.9,
-            borderpad=1,
-        )
-        legend.get_frame().set_facecolor(SURFACE_COLOR)
-        legend.get_frame().set_edgecolor(BORDER_COLOR)
-        legend.get_frame().set_linewidth(0.8)
-        legend.get_title().set_color(TEXT_COLOR)
-        fig.subplots_adjust(left=0.15, right=0.97, top=0.84, bottom=0.12)
-    else:
+    if visible_types:
         legend = ax.legend(
             title="源码类型",
             loc="upper center",
@@ -297,7 +436,9 @@ def show_source_file_chart(
             handlelength=1.2,
         )
         legend.get_title().set_color(TEXT_COLOR)
-        fig.subplots_adjust(left=0.15, right=0.97, top=0.84, bottom=0.23)
+
+    _draw_project_share_donut(share_ax, project_counts)
+    fig.subplots_adjust(left=0.10, right=0.98, top=0.84, bottom=0.23)
 
     plt.show()
 
