@@ -1,6 +1,7 @@
 import os
 import subprocess
 
+import matplotlib.pyplot as plt
 
 SOURCE_SUFFIXES = (
     ".py",
@@ -15,8 +16,20 @@ SOURCE_SUFFIXES = (
     ".tsx",
     ".css",
     ".js",
-    ".jsx"
+    ".jsx",
 )
+
+PROJECTS = {
+    "LLM": r"C:\Users\duanm\Music\GitHubProjects\LLM",
+    "MLBase": r"C:\Users\duanm\Music\GitHubProjects\MLBase",
+    "PyDevelopment": r"C:\Users\duanm\Music\GitHubProjects\PyDevelopment",
+    "RustStudy": r"C:\Users\duanm\Music\GitHubProjects\RustStudy",
+    "FrontendStudy": r"C:\Users\duanm\Music\GitHubProjects\FrontendStudy",
+    "CPPStudy": r"C:\Users\duanm\Music\GitHubProjects\CPPStudy",
+    "OtherStudy": r"C:\Users\duanm\Music\GitHubProjects\OtherStudy",
+    "JavaScalaStudy": r"C:\Users\duanm\Music\GitHubProjects\JavaScalaStudy",
+    "SQLStudy": r"C:\Users\duanm\Music\GitHubProjects\SQLStudy",
+}
 
 
 def count_git_source_files(directory):
@@ -61,13 +74,99 @@ def count_git_source_files(directory):
     return {file_type: count for file_type, count in counts.items() if count}
 
 
-# 加油学习!
-print("LLM:", count_git_source_files(r'C:\Users\duanm\Music\GitHubProjects\LLM'))
-print("MLBase:", count_git_source_files(r'C:\Users\duanm\Music\GitHubProjects\MLBase'))
-print("PyDevelopment:", count_git_source_files(r'C:\Users\duanm\Music\GitHubProjects\PyDevelopment'))
-print("RustStudy:", count_git_source_files(r'C:\Users\duanm\Music\GitHubProjects\RustStudy'))
-print("FrontendStudy:", count_git_source_files(r'C:\Users\duanm\Music\GitHubProjects\FrontendStudy'))
-print("CPPStudy:", count_git_source_files(r'C:\Users\duanm\Music\GitHubProjects\CPPStudy'))
-print("OtherStudy:", count_git_source_files(r'C:\Users\duanm\Music\GitHubProjects\OtherStudy'))
-print("JavaScalaStudy:", count_git_source_files(r'C:\Users\duanm\Music\GitHubProjects\JavaScalaStudy'))
-print("SQLStudy:", count_git_source_files(r'C:\Users\duanm\Music\GitHubProjects\SQLStudy'))
+def show_source_file_chart(project_counts):
+    """用一张堆叠柱状图比较各项目的源码文件数量。"""
+    plt.rcParams["font.sans-serif"] = [
+        "Microsoft YaHei",
+        "SimHei",
+        "Arial Unicode MS",
+        "DejaVu Sans",
+    ]
+    plt.rcParams["axes.unicode_minus"] = False
+
+    all_types = [*SOURCE_SUFFIXES, "CMakeLists.txt"]
+    visible_types = [
+        source_type
+        for source_type in all_types
+        if any(counts.get(source_type, 0) for counts in project_counts.values())
+    ]
+    sorted_projects = sorted(
+        project_counts,
+        key=lambda project: sum(project_counts[project].values()),
+    )
+    totals = [sum(project_counts[project].values()) for project in sorted_projects]
+    max_total = max(totals, default=1)
+
+    color_map = plt.colormaps["tab20"]
+    fig, ax = plt.subplots(figsize=(15, 8))
+    left = [0] * len(sorted_projects)
+
+    for index, source_type in enumerate(visible_types):
+        values = [
+            project_counts[project].get(source_type, 0)
+            for project in sorted_projects
+        ]
+        bars = ax.barh(
+            sorted_projects,
+            values,
+            left=left,
+            height=0.62,
+            label=source_type,
+            color=color_map(index / max(1, len(visible_types) - 1)),
+        )
+
+        for bar, count in zip(bars, values):
+            if count >= max_total * 0.025:
+                ax.text(
+                    bar.get_x() + bar.get_width() / 2,
+                    bar.get_y() + bar.get_height() / 2,
+                    str(count),
+                    ha="center",
+                    va="center",
+                    color="white",
+                    fontsize=9,
+                    fontweight="bold",
+                )
+
+        left = [current + value for current, value in zip(left, values)]
+
+    for project, total in zip(sorted_projects, totals):
+        ax.text(
+            total + max_total * 0.01,
+            project,
+            f"合计 {total}",
+            va="center",
+            fontsize=10,
+        )
+
+    ax.set_xlim(0, max_total * 1.12)
+    ax.set_xlabel("源码文件数")
+    ax.set_ylabel("项目")
+    ax.set_title("各项目 Git 源码文件数量对比", fontsize=18, fontweight="bold")
+    ax.grid(axis="x", linestyle="--", alpha=0.25)
+    ax.set_axisbelow(True)
+    ax.spines[["top", "right", "left"]].set_visible(False)
+    ax.tick_params(axis="y", length=0)
+    ax.legend(
+        title="源码类型",
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.12),
+        ncol=min(7, len(visible_types)),
+        frameon=False,
+    )
+    fig.tight_layout()
+    plt.show()
+
+
+def main():
+    project_counts = {}
+    for project, directory in PROJECTS.items():
+        counts = count_git_source_files(directory)
+        project_counts[project] = counts
+        print(f"{project}: {counts}")
+
+    show_source_file_chart(project_counts)
+
+
+if __name__ == "__main__":
+    main()
