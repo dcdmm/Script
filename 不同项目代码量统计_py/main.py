@@ -162,15 +162,6 @@ def _draw_project_share_donut(
         color=TEXT_COLOR,
         pad=28,
     )
-    ax.text(
-        0,
-        1.015,
-        "项目源码文件数 ÷ 全部项目源码文件数",
-        transform=ax.transAxes,
-        color=MUTED_COLOR,
-        fontsize=9,
-    )
-
     if total_source_files:
         visible_projects = [
             project for project in projects if project_totals[project] > 0
@@ -180,10 +171,10 @@ def _draw_project_share_donut(
             colors=[project_colors[project] for project in visible_projects],
             startangle=90,
             counterclock=False,
-            radius=0.82,
-            center=(0, 0.18),
+            radius=0.88,
+            center=(0, 0.24),
             wedgeprops={
-                "width": 0.32,
+                "width": 0.34,
                 "edgecolor": SURFACE_COLOR,
                 "linewidth": 2,
             },
@@ -210,10 +201,10 @@ def _draw_project_share_donut(
             [1],
             colors=[ROW_BAND_COLOR],
             startangle=90,
-            radius=0.82,
-            center=(0, 0.18),
+            radius=0.88,
+            center=(0, 0.24),
             wedgeprops={
-                "width": 0.32,
+                "width": 0.34,
                 "edgecolor": SURFACE_COLOR,
                 "linewidth": 2,
             },
@@ -221,7 +212,7 @@ def _draw_project_share_donut(
 
     ax.text(
         0,
-        0.23,
+        0.29,
         f"{total_source_files:,}",
         ha="center",
         va="center",
@@ -231,7 +222,7 @@ def _draw_project_share_donut(
     )
     ax.text(
         0,
-        0.08,
+        0.14,
         "源码文件",
         ha="center",
         va="center",
