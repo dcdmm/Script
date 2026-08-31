@@ -1,49 +1,73 @@
 import os
-import pathspec
+import subprocess
 
 
-def load_gitignore(directory):
-    """加载目录下的.gitignore文件,返回pathspec对象"""
-    gitignore_path = os.path.join(directory, '.gitignore')
-    patterns = []
-    if os.path.exists(gitignore_path):
-        with open(gitignore_path, 'r', encoding='utf-8') as f:
-            patterns = f.read().splitlines()
-    patterns.append('.git/')  # 默认忽略.git目录
-    return pathspec.PathSpec.from_lines('gitwildmatch', patterns)
+SOURCE_SUFFIXES = (
+    ".py",
+    ".ipynb",
+    ".sql",
+    ".java",
+    ".scala",
+    ".cpp",
+    ".h",
+    ".rs",
+    ".ts",
+    ".tsx",
+    ".css",
+    ".js",
+    ".jsx"
+)
 
 
-def count_py_files(directory):
-    """递归统计给定目录下所有代码文件的数量(忽略.gitignore中的内容)"""
-    code_cout = {".py": 0, ".ipynb": 0, ".sql": 0,
-                 ".java": 0, ".scala": 0, ".cpp": 0,
-                 ".h": 0, ".rs": 0, "CMakeLists.txt": 0}
-    spec = load_gitignore(directory)
-    for root, dirs, files in os.walk(directory):
-        rel_root = os.path.relpath(root, directory)
-        if rel_root == '.':
-            rel_root = ''
-        dirs[:] = [d for d in dirs if not spec.match_file(
-            os.path.join(rel_root, d, '').replace('\\', '/') if rel_root else d + '/'
-        )]
-        for file in files:
-            rel_file = os.path.join(rel_root, file).replace('\\', '/') if rel_root else file
-            if spec.match_file(rel_file):  # 跳过gitignore中指定的文件
-                continue
+def count_git_source_files(directory):
+    """统计已经纳入Git版本控制的源码文件数量"""
+    try:
+        repository = os.path.abspath(directory)
+        result = subprocess.run(
+            [
+                "git",
+                "-c",
+                f"safe.directory={repository}",
+                "-C",
+                repository,
+                "ls-files",
+                "-z",
+            ],
+            check=True,
+            capture_output=True,
+        )
+    except FileNotFoundError as exc:
+        raise RuntimeError("未找到 git 命令，请先安装 Git 并加入 PATH") from exc
+    except subprocess.CalledProcessError as exc:
+        error = exc.stderr.decode(errors="replace").strip()
+        raise RuntimeError(f"无法读取 Git 仓库 {directory}: {error}") from exc
 
-            for k in code_cout.keys():
-                if file.endswith(k):
-                    code_cout[k] += 1
-    return {key: value for key, value in code_cout.items() if value != 0}
+    counts = {suffix: 0 for suffix in SOURCE_SUFFIXES}
+    counts["CMakeLists.txt"] = 0
+
+    for raw_path in result.stdout.split(b"\0"):
+        if not raw_path:
+            continue
+
+        filename = os.path.basename(os.fsdecode(raw_path))
+        if filename == "CMakeLists.txt":
+            counts["CMakeLists.txt"] += 1
+            continue
+
+        suffix = os.path.splitext(filename)[1].lower()
+        if suffix in counts:
+            counts[suffix] += 1
+
+    return {file_type: count for file_type, count in counts.items() if count}
 
 
 # 加油学习!
-print("LLM:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\LLM'))
-print("MLBase:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\MLBase'))
-print("PyDevelopment:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\PyDevelopment'))
-print("RustStudy:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\RustStudy'))
-print("FrontendStudy:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\FrontendStudy'))
-print("CPPStudy:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\CPPStudy'))
-print("OtherStudy:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\OtherStudy'))
-print("JavaScalaStudy:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\JavaScalaStudy'))
-print("SQLStudy:", count_py_files(r'C:\Users\duanm\Music\GitHubProjects\SQLStudy'))
+print("LLM:", count_git_source_files(r'C:\Users\duanm\Music\GitHubProjects\LLM'))
+print("MLBase:", count_git_source_files(r'C:\Users\duanm\Music\GitHubProjects\MLBase'))
+print("PyDevelopment:", count_git_source_files(r'C:\Users\duanm\Music\GitHubProjects\PyDevelopment'))
+print("RustStudy:", count_git_source_files(r'C:\Users\duanm\Music\GitHubProjects\RustStudy'))
+print("FrontendStudy:", count_git_source_files(r'C:\Users\duanm\Music\GitHubProjects\FrontendStudy'))
+print("CPPStudy:", count_git_source_files(r'C:\Users\duanm\Music\GitHubProjects\CPPStudy'))
+print("OtherStudy:", count_git_source_files(r'C:\Users\duanm\Music\GitHubProjects\OtherStudy'))
+print("JavaScalaStudy:", count_git_source_files(r'C:\Users\duanm\Music\GitHubProjects\JavaScalaStudy'))
+print("SQLStudy:", count_git_source_files(r'C:\Users\duanm\Music\GitHubProjects\SQLStudy'))
