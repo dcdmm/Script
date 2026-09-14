@@ -8,3 +8,5 @@ import pandas as pd
 
 df = pd.DataFrame(arr)
 print(df)
+
+df.columns = ["a", "b", "c"]
