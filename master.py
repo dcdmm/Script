@@ -7,6 +7,8 @@ print('one')
 print('two')
 print('three')
 print('four')
+print('five')
+print('six')
 
 print('一一一')
 print('二二二')
