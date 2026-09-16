@@ -16,3 +16,4 @@ print('五五五')
 print('六六六')
 
 print(-1)
+print(-2)
