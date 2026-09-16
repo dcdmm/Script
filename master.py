@@ -10,3 +10,4 @@ print('four')
 
 print('一一一')
 print('二二二')
+print('三三三')
