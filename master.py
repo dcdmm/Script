@@ -7,3 +7,5 @@ print('one')
 print('two')
 print('three')
 print('four')
+
+print('一一一')
