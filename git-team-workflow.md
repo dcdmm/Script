@@ -68,5 +68,3 @@ flowchart TD
 | ⑤ bb 通过 PR 进入主分支 | 本地推送 bb；GitHub 合并 PR | `git push origin bb`，创建并合并 [PR #7](https://github.com/dcdmm/Script/pull/7)：远程 bb → master | 推送后 bb、origin/bb 和远程 bb 均在 `0d0202f`；PR 合并把远程 master 更新到 `a445e6b`，本地 origin/master 仍需获取更新 |
 | ⑥ 同步本地主分支 | 本地 master | `git switch master` → `git pull --ff-only origin master` | 本地 master 与 origin/master 都指向 `a445e6b`，不产生新提交 |
 | ⑦ 删除已完成的开发分支 | 本地及远程 | `git branch -d aa bb` → `git push origin --delete aa bb` → `git fetch origin --prune` | 本地 aa、bb 与远程 aa、bb 已删除，origin/aa、origin/bb 引用已清理；保留 master、origin/master，已合并的代码、提交历史和 PR 记录仍在 |
-| 名称说明 | 本地分支 / 远程跟踪引用 / 远程实际分支 | master、aa、bb 是本地分支；origin/master、origin/aa、origin/bb 是保存在本地的远程状态记录；GitHub 上实际分支名仍是 master、aa、bb | PR 比较和合并 GitHub 上的实际分支；GitHub 上的合并不会自动更新电脑中的引用，需要 fetch 或 pull |
-| 读图说明 | 蓝色主分支；橙色 aa；紫色 bb；灰色收尾操作 | 所有操作均已完成，全部使用实线；哈希值标明各阶段对应的提交，六边形表示遇到冲突；push、fetch 和快进拉取不新增提交 | 两条线汇入冲突节点，分别表示 bb 原有内容和 origin/master 带来的内容；解决后先更新本地 bb，推送后才更新远程 bb，通过 PR 才更新远程 master |
