@@ -19,10 +19,9 @@ flowchart TD
         P13["⑧ 合并原来的 PR #13<br/>远程 master 更新到 f87dde7<br/>本地 origin/master 仍需获取最新状态"]
     end
 
-    subgraph FINISH["已完成的本地同步 · 本次未删除开发分支"]
+    subgraph FINISH["同步本地 master，完成流程"]
         direction TD
-        SYNC["⑨ 获取更新并拉取到本地 master<br/>origin/master 与本地 master 均到达 f87dde7"]
-        FINAL["本次结束状态<br/>master / origin/master：f87dde7<br/>aa / origin/aa：abeab63<br/>bb / origin/bb：e5bfff3"]
+        SYNC["⑨ 切回 master，拉取远程更新并完成快进同步<br/>本地 master 与 origin/master 均指向 f87dde7<br/>流程完成"]
     end
 
     O -->|"创建 aa"| A0
@@ -43,7 +42,6 @@ flowchart TD
     UPDATE -->|"冲突已解决，合并 PR #13"| P13
     P12 -->|"主分支从 c25f6a4 继续更新"| P13
     P13 -->|"同步远程结果到本地"| SYNC
-    SYNC --> FINAL
 
     classDef mainNode fill:#eff6ff,stroke:#2563eb,color:#172554,stroke-width:2px;
     classDef aaNode fill:#fff7ed,stroke:#c2410c,color:#7c2d12,stroke-width:2px;
@@ -53,12 +51,12 @@ flowchart TD
     class O,P12,FETCH,P13 mainNode;
     class A0,A1,PA aaNode;
     class B0,B1,PB,X,M,UPDATE bbNode;
-    class READY,SYNC,FINAL actionNode;
+    class READY,SYNC actionNode;
 
     linkStyle 0,1,2,6 stroke:#c2410c,stroke-width:3px;
     linkStyle 3,4,5,7,9,13,14,15 stroke:#7c3aed,stroke-width:3px;
     linkStyle 8,10,12,16 stroke:#2563eb,stroke-width:3px;
-    linkStyle 11,17,18 stroke:#64748b,stroke-width:2px;
+    linkStyle 11,17 stroke:#64748b,stroke-width:2px;
 ```
 
 | 步骤 | 在哪里操作 | 做了什么 | 结果与分支状态 |
@@ -71,4 +69,4 @@ flowchart TD
 | ⑥ 解决冲突并提交 | 本地 bb | 将获取的主分支提交 `c25f6a4` 合入 bb，处理冲突并完成提交 | 生成 `e5bfff3`；两个父提交是 bb 原来的 `0cb2d33` 和主分支的 `c25f6a4`；此时远程 bb 和 origin/bb 尚未接收新提交 |
 | ⑦ 更新已有 PR | 本地推送；GitHub 自动更新 PR | 推送 bb 的合并提交 | bb、origin/bb 与远程 bb 均在 `e5bfff3`；原 PR #13 自动包含新提交，无需再建 PR |
 | ⑧ 合并 bb | GitHub | 合并原 PR #13，生成 `f87dde7` | 远程 master 接收 bb 的整合结果；远程 aa 仍在 `abeab63`，远程 bb 仍在 `e5bfff3` |
-| ⑨ 同步本地，完成本次流程 | 本地 master | 获取记录显示 origin/master 已更新；本地 master 的记录显示通过 pull 快进 | master 与 origin/master 均在 `f87dde7`；aa、bb 及 origin/aa、origin/bb 仍保留，尚未删除 |
+| ⑨ 同步本地主分支，完成流程 | 本地 master | 切回 master，拉取远程更新，完成快进同步 | 本地 master 与 origin/master 都指向 `f87dde7`，不产生新提交 |

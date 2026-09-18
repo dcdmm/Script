@@ -32,16 +32,12 @@ flowchart TD
         RB -->|"GitHub PR #7：远程 bb → master"| P7
     end
 
-    subgraph CLEANUP["完成后的操作 · 不产生新提交"]
+    subgraph FINISH["同步本地 master，完成流程"]
         direction TD
-        S["⑥ 切回 master，执行 git pull --ff-only origin master<br/>先更新 origin/master，再快进本地 master<br/>两者都指向 a445e6b"]
-        D["⑦ 删除已完成的开发分支<br/>删除本地 aa、bb 和远程 aa、bb<br/>清理 origin/aa、origin/bb 跟踪引用"]
-        F["最终状态<br/>master 与 origin/master 均指向 a445e6b<br/>已合并的代码、提交历史和 PR 记录保留"]
+        S["⑥ 切回 master，拉取远程更新并完成快进同步<br/>本地 master 与 origin/master 均指向 a445e6b<br/>流程完成"]
     end
 
     P7 --> S
-    S --> D
-    D --> F
 
     classDef mainNode fill:#eff6ff,stroke:#2563eb,color:#172554,stroke-width:2px;
     classDef aaNode fill:#fff7ed,stroke:#c2410c,color:#7c2d12,stroke-width:2px;
@@ -51,12 +47,12 @@ flowchart TD
     class O,P6,FM,P7 mainNode;
     class A0,A1,RA aaNode;
     class B0,B1,X,M,RB bbNode;
-    class S,D,F actionNode;
+    class S actionNode;
 
     linkStyle 0,1,2,6 stroke:#c2410c,stroke-width:3px;
     linkStyle 3,4,8,10,11,13 stroke:#7c3aed,stroke-width:3px;
     linkStyle 5,7,9,12 stroke:#2563eb,stroke-width:3px;
-    linkStyle 14,15,16 stroke:#64748b,stroke-width:2px;
+    linkStyle 14 stroke:#64748b,stroke-width:2px;
 ```
 
 | 步骤 | 在哪里操作 | 做了什么 | 完成后的状态 |
@@ -66,5 +62,4 @@ flowchart TD
 | ③ 在 bb 同步主分支，遇到冲突 | 本地 bb | `git switch bb` → `git fetch origin` → `git merge origin/master` | fetch 将 origin/master 更新到 `5f10f1f`，不移动本地 master；合并时双方在同一位置添加不同内容，出现冲突，等待解决 |
 | ④ 解决冲突并提交 | 本地 bb | 将文件整理成 a0、a1、b0、b1，去掉冲突标记，执行 `git add test.txt` 和 `git commit` | 仅本地 bb 更新到 `0d0202f`；origin/bb 和远程 bb 尚未接收此提交；origin/master 与远程 master 仍在 `5f10f1f` |
 | ⑤ bb 通过 PR 进入主分支 | 本地推送 bb；GitHub 合并 PR | `git push origin bb`，创建并合并 [PR #7](https://github.com/dcdmm/Script/pull/7)：远程 bb → master | 推送后 bb、origin/bb 和远程 bb 均在 `0d0202f`；PR 合并把远程 master 更新到 `a445e6b`，本地 origin/master 仍需获取更新 |
-| ⑥ 同步本地主分支 | 本地 master | `git switch master` → `git pull --ff-only origin master` | 本地 master 与 origin/master 都指向 `a445e6b`，不产生新提交 |
-| ⑦ 删除已完成的开发分支 | 本地及远程 | `git branch -d aa bb` → `git push origin --delete aa bb` → `git fetch origin --prune` | 本地 aa、bb 与远程 aa、bb 已删除，origin/aa、origin/bb 引用已清理；保留 master、origin/master，已合并的代码、提交历史和 PR 记录仍在 |
+| ⑥ 同步本地主分支，完成流程 | 本地 master | 切回 master，拉取远程更新，完成快进同步 | 本地 master 与 origin/master 都指向 `a445e6b`，不产生新提交 |
