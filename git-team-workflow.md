@@ -23,7 +23,7 @@ flowchart TD
         B0 --> B1
         O --> P6
         RA -->|"GitHub PR #6：远程 aa → master"| P6
-        P6 -->|"执行 fetch，让 origin/master 跟上远程 master"| FM
+        P6 --> FM
         B1 -->|"bb 原有内容：b0、b1"| X
         FM -->|"从 origin/master 引入 a0、a1"| X
         X -->|"手动保留双方内容，再 add、commit"| M
