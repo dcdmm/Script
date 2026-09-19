@@ -1,6 +1,6 @@
 ```mermaid
 flowchart TD
-    subgraph WORK["PR #16 / #17：在 GitHub 解决冲突并合并 · 蓝色 master / 橙色 aa / 紫色 bb"]
+    subgraph WORK["蓝色 master / 橙色 aa / 紫色 bb"]
         direction TD
 
         O["① 共同起点 · 0a558dd<br/>本地 master 与 origin/master 已同步<br/>test.txt 为空，从这里创建 aa、bb"]
@@ -12,8 +12,8 @@ flowchart TD
         PB["③ 推送 bb，创建 PR #17<br/>远程 bb → master<br/>bb、origin/bb、远程 bb 均在 59b7fd3"]
         READY["两个 PR 都已创建，尚未合并<br/>远程 master 仍在 0a558dd"]
         P16["④ 在 GitHub 合并 aa 的 PR #16<br/>远程 master 更新到 3977c37<br/>文件内容：a0、a1"]
-        X{{"⑤ bb 的 PR #17 与新主分支有冲突<br/>在 GitHub 点击 Resolve conflicts<br/>在网页中编辑冲突文件，保留双方内容"}}
-        M["⑥ 网页上标记已解决，点击 Commit merge<br/>远程 bb 更新到 0c3d1ee<br/>文件内容：b0、b1、a0、a1<br/>远程 master 仍在 3977c37"]
+        X{{"⑤ bb 的 PR #17 与新主分支有冲突<br/>在 GitHub 点击 Resolve conflicts<br/>在Github中编辑冲突文件，保留双方内容"}}
+        M["⑥ Github上标记已解决，点击 Commit merge<br/>远程 bb 更新到 0c3d1ee<br/>文件内容：b0、b1、a0、a1<br/>远程 master 仍在 3977c37"]
         P17["⑦ 点击 Merge pull request，合并原 PR #17<br/>远程 master 更新到 8920474<br/>文件内容：b0、b1、a0、a1<br/>远程 bb 仍在 0c3d1ee"]
     end
 
@@ -36,7 +36,7 @@ flowchart TD
     X -->|"Mark as resolved，然后 Commit merge"| M
     M -->|"原 PR #17 自动更新，冲突已解决"| P17
     P16 -->|"主分支接收 bb 的整合结果"| P17
-    P17 -->|"网页操作完成后，同步本地 master"| S
+    P17 -->|"Github操作完成后，同步本地 master"| S
 
     classDef mainNode fill:#eff6ff,stroke:#2563eb,color:#172554,stroke-width:2px;
     classDef aaNode fill:#fff7ed,stroke:#c2410c,color:#7c2d12,stroke-width:2px;
@@ -60,7 +60,7 @@ flowchart TD
 | ② 创建 aa 的 PR | 本地推送；GitHub 创建 PR | 推送 aa，创建 [PR #16](https://github.com/dcdmm/Script/pull/16)：远程 aa → master | aa、origin/aa 与远程 aa 均在 `7e5545c`；主分支尚未改变 |
 | ③ 创建 bb 的 PR | 本地推送；GitHub 创建 PR | 推送 bb，创建 [PR #17](https://github.com/dcdmm/Script/pull/17)：远程 bb → master | bb、origin/bb 与远程 bb 均在 `59b7fd3`；两个 PR 都已创建，远程 master 仍在 `0a558dd` |
 | ④ 合并 aa 的 PR | GitHub | 合并 PR #16 | 远程 master 更新到 `3977c37`，包含 a0、a1；bb 的 PR #17 与更新后的主分支有冲突 |
-| ⑤ 在网页处理冲突 | GitHub 的 PR #17 页面 | 点击 `Resolve conflicts`，编辑冲突文件，保留 b0、b1、a0、a1，去掉冲突标记 | 在网页中确定合并结果；此时尚未将 bb 的 PR 合入 master |
-| ⑥ 保存网页上的冲突解决结果 | GitHub 的远程 bb | 点击 `Mark as resolved`，再点击 `Commit merge`，将远程 master 合入远程 bb | GitHub 生成 `0c3d1ee`，远程 bb 更新，原 PR #17 自动更新；远程 master 仍在 `3977c37`。本地 bb 和 origin/bb 仍在 `59b7fd3`，不会自动同步 |
+| ⑤ 在Github处理冲突 | GitHub 的 PR #17 页面 | 点击 `Resolve conflicts`，编辑冲突文件，保留 b0、b1、a0、a1，去掉冲突标记 | 在Github中确定合并结果；此时尚未将 bb 的 PR 合入 master |
+| ⑥ 保存Github上的冲突解决结果 | GitHub 的远程 bb | 点击 `Mark as resolved`，再点击 `Commit merge`，将远程 master 合入远程 bb | GitHub 生成 `0c3d1ee`，远程 bb 更新，原 PR #17 自动更新；远程 master 仍在 `3977c37`。本地 bb 和 origin/bb 仍在 `59b7fd3`，不会自动同步 |
 | ⑦ 合并 bb 原来的 PR | GitHub | 点击 `Merge pull request`，完成 PR #17 的合并 | 远程 master 更新到 `8920474`，包含双方内容；远程 bb 仍在 `0c3d1ee`。这一步才把 bb 的整合结果放入主分支 |
 | ⑧ 同步本地主分支，完成流程 | 本地 master | 切回 master，拉取远程更新，完成快进同步； | 本地 master 与 origin/master 都指向 `8920474`，不产生新提交 |

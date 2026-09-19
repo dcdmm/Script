@@ -1,15 +1,15 @@
 ```mermaid
 flowchart TD
-    subgraph WORK["先创建两个 PR，再解决 bb 冲突"]
+    subgraph WORK["蓝色主分支 / 橙色 aa / 紫色 bb"]
         direction TD
 
         O["① 共同起点 · 7a96d1d<br/>本地 master 与 origin/master 已同步<br/>从这里分别创建 aa、bb"]
         A0["本地 aa 提交 · b9ea1c9<br/>提交说明：a"]
         A1["本地 aa 提交 · abeab63<br/>提交说明：a1"]
-        PA["② 推送 aa，创建 PR #12<br/>远程 aa → master<br/>aa、origin/aa、远程 aa 均在 abeab63"]
+        PA["② 推送 aa，创建 PR #12<br/>远程 aa → 远程master<br/>aa、origin/aa、远程 aa 均在 abeab63"]
         B0["本地 bb 提交 · fddb8b3<br/>提交说明：b0"]
         B1["本地 bb 提交 · 0cb2d33<br/>提交说明：b1"]
-        PB["③ 推送 bb，创建 PR #13<br/>远程 bb → master<br/>bb、origin/bb、远程 bb 均在 0cb2d33"]
+        PB["③ 推送 bb，创建 PR #13<br/>远程 bb → 远程master<br/>bb、origin/bb、远程 bb 均在 0cb2d33"]
         READY["两个 PR 都已创建，尚未合并<br/>此时远程 master 仍在 7a96d1d"]
         P12["④ 先合并 aa 的 PR #12<br/>远程 master 更新到 c25f6a4<br/>本地 master 和 origin/master 不会自动更新"]
         X{{"bb 原有的 PR #13 现在有冲突<br/>主分支已加入 aa 的改动<br/>需要解决冲突后才能合并"}}
@@ -65,7 +65,7 @@ flowchart TD
 | ② 创建 aa 的 PR | 本地推送；GitHub 创建 PR | 推送 aa，创建 [PR #12](https://github.com/dcdmm/Script/pull/12)：远程 aa → master | aa、origin/aa 与远程 aa 均在 `abeab63`；创建 PR 不会修改主分支 |
 | ③ 创建 bb 的 PR | 本地推送；GitHub 创建 PR | 推送 bb，创建 [PR #13](https://github.com/dcdmm/Script/pull/13)：远程 bb → master | bb、origin/bb 与远程 bb 均在 `0cb2d33`；此时 PR #12 也尚未合并，目标主分支仍在 `7a96d1d` |
 | ④ 合并 aa | GitHub | 合并 PR #12，生成 `c25f6a4` | 远程 master 已包含 aa 的改动；原 PR #13 与更新后的主分支有冲突；本地引用不会自动更新 |
-| ⑤ 获取最新主分支 | 本地 | 获取记录显示执行过 `git fetch origin master` | origin/master 更新到 `c25f6a4`；本地 master 仍在 `7a96d1d`，工作分支尚未因此合并 |
+| ⑤ 获取最新主分支 | 本地 | 执行 `git fetch origin master`，获取远程主分支的最新状态 | origin/master 更新到 `c25f6a4`；本地 master 仍在 `7a96d1d`，工作分支尚未因此合并 |
 | ⑥ 解决冲突并提交 | 本地 bb | 将获取的主分支提交 `c25f6a4` 合入 bb，处理冲突并完成提交 | 生成 `e5bfff3`；两个父提交是 bb 原来的 `0cb2d33` 和主分支的 `c25f6a4`；此时远程 bb 和 origin/bb 尚未接收新提交 |
 | ⑦ 更新已有 PR | 本地推送；GitHub 自动更新 PR | 推送 bb 的合并提交 | bb、origin/bb 与远程 bb 均在 `e5bfff3`；原 PR #13 自动包含新提交，无需再建 PR |
 | ⑧ 合并 bb | GitHub | 合并原 PR #13，生成 `f87dde7` | 远程 master 接收 bb 的整合结果；远程 aa 仍在 `abeab63`，远程 bb 仍在 `e5bfff3` |
