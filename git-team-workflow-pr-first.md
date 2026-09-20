@@ -11,7 +11,7 @@ flowchart TD
         B1["本地 bb 提交 · 0cb2d33<br/>提交说明：b1"]
         PB["③ 推送 bb，创建 PR #13<br/>远程 bb → 远程master<br/>bb、origin/bb、远程 bb 均在 0cb2d33"]
         READY["两个 PR 都已创建，尚未合并<br/>此时远程 master 仍在 7a96d1d"]
-        P12["④ 先合并 aa 的 PR #12<br/>GitHub 上的远程 master 更新到 c25f6a4<br/>尚未拉取更新，本地 master 和 origin/master 仍在 7a96d1d"]
+        P12["④ 先合并 aa 的 PR #12<br/>远程 master 更新到 c25f6a4<br/>尚未拉取更新，本地 master 和 origin/master 仍在 7a96d1d"]
         X{{"bb 原有的 PR #13 现在有冲突<br/>主分支已加入 aa 的改动<br/>需要解决冲突后才能合并"}}
         FETCH["⑤ 获取主分支更新<br/>git fetch origin master<br/>origin/master 更新到 c25f6a4"]
         M["⑥ 将 origin/master（c25f6a4）合入本地 bb，解决冲突并提交<br/>生成合并提交 e5bfff3<br/>此时只更新本地 bb，远程 bb 尚未更新"]

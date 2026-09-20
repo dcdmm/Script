@@ -22,14 +22,14 @@ flowchart TD
         O -->|"创建 bb"| B0
         B0 --> B1
         O --> P6
-        RA -->|"GitHub PR #6：远程 aa → 远程master"| P6
+        RA -->|"PR #6：远程 aa → 远程master"| P6
         P6 --> FM
         B1 -->|"bb 原有内容：b0、b1"| X
         FM -->|"从 origin/master 引入 a0、a1"| X
         X -->|"手动保留双方内容，再 add、commit"| M
         M -->|"git push origin bb"| RB
         P6 --> P7
-        RB -->|"GitHub PR #7：远程 bb → 远程master"| P7
+        RB -->|"PR #7：远程 bb → 远程master"| P7
     end
 
     subgraph FINISH["同步本地 master，完成流程"]
