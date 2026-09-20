@@ -3,7 +3,7 @@ flowchart TD
     subgraph WORK["蓝色 master / 橙色 aa / 紫色 bb"]
         direction TD
 
-        O["① 共同起点 · 0a558dd<br/>本地 master 与 origin/master 已同步<br/>test.txt 为空，从这里创建 aa、bb"]
+        O["① 共同起点 · 0a558dd<br/>本地 master 与 origin/master 已同步<br/>test.txt 为空"]
         A0["在本地 aa 提交 a0 · c4376d2<br/>文件内容：a0"]
         A1["在本地 aa 提交 a1 · 7e5545c<br/>文件内容：a0、a1"]
         PA["② 推送 aa，创建 PR #16<br/>远程 aa → master<br/>aa、origin/aa、远程 aa 均在 7e5545c"]

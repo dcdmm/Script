@@ -3,25 +3,25 @@ flowchart TD
     subgraph WORK["蓝色主分支 / 橙色 aa / 紫色 bb"]
         direction TD
 
-        O["① 共同起点 · 7a96d1d<br/>本地 master 与 origin/master 已同步<br/>从这里分别创建 aa、bb"]
-        A0["本地 aa 提交 · b9ea1c9<br/>提交说明：a"]
-        A1["本地 aa 提交 · abeab63<br/>提交说明：a1"]
-        PA["② 推送 aa，创建 PR #12<br/>远程 aa → 远程master<br/>aa、origin/aa、远程 aa 均在 abeab63"]
-        B0["本地 bb 提交 · fddb8b3<br/>提交说明：b0"]
-        B1["本地 bb 提交 · 0cb2d33<br/>提交说明：b1"]
-        PB["③ 推送 bb，创建 PR #13<br/>远程 bb → 远程master<br/>bb、origin/bb、远程 bb 均在 0cb2d33"]
+        O["① 共同起点 · 7a96d1d<br/>本地 master 与 origin/master 已同步<br/>test.txt 为空"]
+        A0["在本地 aa 提交 a · b9ea1c9<br/>文件内容：a0"]
+        A1["在本地 aa 提交 a1 · abeab63<br/>文件内容：a0、a1"]
+        PA["② PR #12 已创建，等待合并<br/>远程 aa → 远程 master"]
+        B0["在本地 bb 提交 b0 · fddb8b3<br/>文件内容：b0"]
+        B1["在本地 bb 提交 b1 · 0cb2d33<br/>文件内容：b0、b1"]
+        PB["③ PR #13 已创建，等待合并<br/>远程 bb → 远程 master"]
         READY["两个 PR 都已创建，尚未合并<br/>此时远程 master 仍在 7a96d1d"]
-        P12["④ 先合并 aa 的 PR #12<br/>远程 master 更新到 c25f6a4<br/>尚未拉取更新，本地 master 和 origin/master 仍在 7a96d1d"]
-        X{{"bb 原有的 PR #13 现在有冲突<br/>主分支已加入 aa 的改动<br/>需要解决冲突后才能合并"}}
-        FETCH["⑤ 获取主分支更新<br/>git fetch origin master<br/>origin/master 更新到 c25f6a4"]
-        M["⑥ 将 origin/master（c25f6a4）合入本地 bb，解决冲突并提交<br/>生成合并提交 e5bfff3<br/>此时只更新本地 bb，远程 bb 尚未更新"]
-        UPDATE["⑦ 推送 bb，原 PR #13 自动更新<br/>bb、origin/bb、远程 bb 均在 e5bfff3<br/>无需重新创建 PR"]
-        P13["⑧ 合并原来的 PR #13<br/>远程 master 更新到 f87dde7<br/>本地 origin/master 仍需获取最新状态"]
+        P12["④ aa 的 PR #12 已合并<br/>远程 master 更新到 c25f6a4<br/>文件内容：a0、a1"]
+        X{{"PR #13 与远程 master 有冲突<br/>bb 的 b0、b1 与 master 的 a0、a1 冲突<br/>需先在本地 bb 整合双方改动"}}
+        FETCH["⑤ 获取远程 master 的最新状态<br/>git fetch origin master<br/>origin/master 更新到 c25f6a4"]
+        M["⑥ 在本地 bb 解决冲突并提交<br/>生成合并提交 e5bfff3，尚未推送<br/>文件内容（三行）：b0、b1a0、a1"]
+        UPDATE["⑦ 远程 bb 更新到 e5bfff3<br/>原 PR #13 自动更新，无需重新创建"]
+        P13["⑧ bb 的 PR #13 已合并<br/>远程 master 更新到 f87dde7<br/>文件内容（三行）：b0、b1a0、a1"]
     end
 
     subgraph FINISH["同步本地 master，完成流程"]
         direction TD
-        SYNC["⑨ 切回 master，拉取远程更新并完成快进同步<br/>本地 master 与 origin/master 均指向 f87dde7<br/>流程完成"]
+        SYNC["⑨ 切回本地 master，拉取并快进同步<br/>本地 master 与 origin/master 均指向 f87dde7"]
     end
 
     O -->|"创建 aa"| A0
@@ -32,16 +32,16 @@ flowchart TD
     B1 -->|"git push origin bb，然后创建 PR"| PB
     PA --> READY
     PB --> READY
-    READY -->|"先合并 PR #12"| P12
-    PB -->|"原 PR #13 继续等待合并"| X
-    P12 -->|"远程 master 分支更新，与 bb 产生冲突"| X
+    READY -->|"在 GitHub 先合并 PR #12"| P12
+    PB --> X
+    P12 -->|"远程 master 已加入 aa 的改动"| X
     X -->|"回到本地处理"| FETCH
-    FETCH -->|"将 origin/master 合入本地 bb"| M
-    B1 -->|"bb 原有提交也参与这次合并"| M
+    FETCH -->|"在本地 bb 执行 git merge origin/master"| M
+    B1 -->|"保留 bb 原有改动"| M
     M -->|"git push origin bb"| UPDATE
-    UPDATE -->|"冲突已解决，合并 PR #13"| P13
-    P12 -->|"主分支从 c25f6a4 继续更新"| P13
-    P13 -->|"同步远程结果到本地"| SYNC
+    UPDATE -->|"在 GitHub 合并原 PR #13"| P13
+    P12 --> P13
+    P13 --> SYNC
 
     classDef mainNode fill:#eff6ff,stroke:#2563eb,color:#172554,stroke-width:2px;
     classDef aaNode fill:#fff7ed,stroke:#c2410c,color:#7c2d12,stroke-width:2px;
@@ -66,7 +66,7 @@ flowchart TD
 | ③ 创建 bb 的 PR | 本地推送；GitHub 创建 PR | 推送 bb，创建 [PR #13](https://github.com/dcdmm/Script/pull/13)：远程 bb → master | bb、origin/bb 与远程 bb 均在 `0cb2d33`；此时 PR #12 也尚未合并，远程 master 分支仍在 `7a96d1d` |
 | ④ 合并 aa | GitHub | 合并 PR #12，生成 `c25f6a4` | 远程 master 更新到 `c25f6a4`，与 PR #13 有冲突；本地 master、origin/master 仍在 `7a96d1d`，bb 仍在 `0cb2d33` |
 | ⑤ 获取最新主分支 | 本地 | 执行 `git fetch origin master`，获取远程主分支的最新状态 | origin/master 更新到 `c25f6a4`；本地 master 仍在 `7a96d1d`，工作分支尚未因此合并 |
-| ⑥ 解决冲突并提交 | 本地 bb | 在本地 bb 执行 `git merge origin/master`，合入远程 master 的最新提交 `c25f6a4`，解决冲突后提交 | 生成 `e5bfff3`；两个父提交是 bb 原来的 `0cb2d33` 和主分支的 `c25f6a4`；此时远程 bb 和 origin/bb 尚未接收新提交 |
+| ⑥ 解决冲突并提交 | 本地 bb | 在本地 bb 执行 `git merge origin/master`，合入远程 master 的最新提交 `c25f6a4`，解决冲突后提交 | 生成 `e5bfff3`；两个父提交是 bb 原来的 `0cb2d33` 和主分支的 `c25f6a4`；test.txt 实际为三行：`b0`、`b1a0`、`a1`（b1 与 a0 连在同一行）；此时远程 bb 和 origin/bb 尚未接收新提交 |
 | ⑦ 更新已有 PR | 本地推送；GitHub 自动更新 PR | 推送 bb 的合并提交 | bb、origin/bb 与远程 bb 均在 `e5bfff3`；原 PR #13 自动包含新提交，无需再建 PR |
 | ⑧ 合并 bb | GitHub | 合并原 PR #13，生成 `f87dde7` | 远程 master 接收 bb 的整合结果；远程 aa 仍在 `abeab63`，远程 bb 仍在 `e5bfff3` |
 | ⑨ 同步本地主分支，完成流程 | 本地 master | 切回 master，拉取远程更新，完成快进同步 | 本地 master 与 origin/master 都指向 `f87dde7`，不产生新提交 |
