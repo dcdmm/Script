@@ -6,20 +6,20 @@ flowchart TD
         O["① 共同起点 · 0a558dd<br/>本地 master 与 origin/master 已同步<br/>test.txt 为空"]
         A0["在本地 aa 提交 a0 · c4376d2<br/>文件内容：a0"]
         A1["在本地 aa 提交 a1 · 7e5545c<br/>文件内容：a0、a1"]
-        PA["② 推送 aa，创建 PR #16<br/>远程 aa → master<br/>aa、origin/aa、远程 aa 均在 7e5545c"]
+        PA["② PR #16 已创建，等待合并<br/>远程 aa → 远程 master"]
         B0["在本地 bb 提交 b0 · c7666cd<br/>文件内容：b0"]
         B1["在本地 bb 提交 b1 · 59b7fd3<br/>文件内容：b0、b1"]
-        PB["③ 推送 bb，创建 PR #17<br/>远程 bb → master<br/>bb、origin/bb、远程 bb 均在 59b7fd3"]
+        PB["③ PR #17 已创建，等待合并<br/>远程 bb → 远程 master"]
         READY["两个 PR 都已创建，尚未合并<br/>远程 master 仍在 0a558dd"]
-        P16["④ 在 GitHub 合并 aa 的 PR #16<br/>远程 master 更新到 3977c37<br/>文件内容：a0、a1"]
-        X{{"⑤ bb 的 PR #17 与新主分支有冲突<br/>在 GitHub 点击 Resolve conflicts<br/>在Github中编辑冲突文件，保留双方内容"}}
-        M["⑥ Github上标记已解决，点击 Commit merge<br/>远程 bb 更新到 0c3d1ee<br/>文件内容：b0、b1、a0、a1<br/>远程 master 仍在 3977c37"]
-        P17["⑦ 点击 Merge pull request，合并原 PR #17<br/>远程 master 更新到 8920474<br/>文件内容：b0、b1、a0、a1<br/>远程 bb 仍在 0c3d1ee"]
+        P16["④ aa 的 PR #16 已合并<br/>远程 master 更新到 3977c37<br/>文件内容：a0、a1"]
+        X{{"⑤ PR #17 与远程 master 有冲突<br/>在 GitHub 点击 Resolve conflicts<br/>保留 b0、b1、a0、a1，去掉冲突标记"}}
+        M["⑥ 远程 bb 更新到 0c3d1ee<br/>文件内容：b0、b1、a0、a1<br/>原 PR #17 自动更新，远程 master 仍在 3977c37"]
+        P17["⑦ bb 的 PR #17 已合并<br/>远程 master 更新到 8920474<br/>文件内容：b0、b1、a0、a1"]
     end
 
-    subgraph FINISH["回到本地同步 · 到本地 master 同步完成为止"]
+    subgraph FINISH["同步本地 master，完成流程"]
         direction TD
-        S["⑧ 切回 master，拉取远程更新并完成快进同步<br/>本地 master 与 origin/master 均指向 8920474<br/>流程完成"]
+        S["⑧ 切回本地 master，拉取并快进同步<br/>本地 master 与 origin/master 均指向 8920474"]
     end
 
     O -->|"创建 aa"| A0
@@ -30,13 +30,13 @@ flowchart TD
     B1 -->|"git push origin bb，然后创建 PR"| PB
     PA --> READY
     PB --> READY
-    READY -->|"先合并 PR #16"| P16
-    PB -->|"原 PR #17 继续等待合并"| X
-    P16 -->|"主分支已有 a0、a1，与 bb 的改动冲突"| X
-    X -->|"Mark as resolved，然后 Commit merge"| M
-    M -->|"原 PR #17 自动更新，冲突已解决"| P17
-    P16 -->|"主分支接收 bb 的整合结果"| P17
-    P17 -->|"Github操作完成后，同步本地 master"| S
+    READY -->|"在 GitHub 先合并 PR #16"| P16
+    PB --> X
+    P16 -->|"远程 master 的 a0、a1 与 bb 的 b0、b1 冲突"| X
+    X -->|"Mark as resolved → Commit merge<br/>将远程 master 合入远程 bb"| M
+    M -->|"Merge pull request：合并原 PR #17<br/>将远程 bb 合入远程 master"| P17
+    P16 --> P17
+    P17 --> S
 
     classDef mainNode fill:#eff6ff,stroke:#2563eb,color:#172554,stroke-width:2px;
     classDef aaNode fill:#fff7ed,stroke:#c2410c,color:#7c2d12,stroke-width:2px;
