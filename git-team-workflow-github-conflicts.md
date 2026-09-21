@@ -19,7 +19,7 @@ flowchart TD
 
     subgraph FINISH["同步本地 master，完成流程"]
         direction TD
-        S["⑧ 切回本地 master，拉取并快进同步<br/>本地 master 与 origin/master 均指向 8920474"]
+        S["切回本地 master，拉取并快进同步<br/>本地 master 与 origin/master 均指向 8920474"]
     end
 
     O -->|"创建 aa"| A0
@@ -63,4 +63,3 @@ flowchart TD
 | ⑤ 在Github处理冲突 | GitHub 的 PR #17 页面 | 点击 `Resolve conflicts`，编辑冲突文件，保留 b0、b1、a0、a1，去掉冲突标记 | 在Github中确定合并结果；此时尚未将 bb 的 PR 合入 master |
 | ⑥ 保存Github上的冲突解决结果 | GitHub 的远程 bb | 点击 `Mark as resolved`，再点击 `Commit merge`，将远程 master 合入远程 bb | GitHub 生成 `0c3d1ee`，远程 bb 更新，原 PR #17 自动更新；远程 master 仍在 `3977c37`。本地 bb 和 origin/bb 仍在 `59b7fd3`，不会自动同步 |
 | ⑦ 合并 bb 原来的 PR | GitHub | 点击 `Merge pull request`，完成 PR #17 的合并 | 远程 master 更新到 `8920474`，包含双方内容；远程 bb 仍在 `0c3d1ee`。这一步才把 bb 的整合结果放入主分支 |
-| ⑧ 同步本地主分支，完成流程 | 本地 master | 切回 master，拉取远程更新，完成快进同步； | 本地 master 与 origin/master 都指向 `8920474`，不产生新提交 |
